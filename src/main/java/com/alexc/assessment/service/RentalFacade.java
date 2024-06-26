@@ -1,6 +1,6 @@
 package com.alexc.assessment.service;
 
-import com.alexc.assessment.model.Quote;
+import com.alexc.assessment.model.RentalAgreement;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
@@ -15,5 +15,6 @@ public interface RentalFacade {
      * - the rental period is always in whole days
      * - there is no validation on number of days (can be quite big number which is not typical for rental)
      */
-    @NotNull Quote calculateQuote(@NotNull String toolCode, @NotNull LocalDate checkoutDate, int rentalDays, int discountPercent);
+    @NotNull
+    RentalAgreement checkout(@NotNull String toolCode, @NotNull LocalDate checkoutDate, int rentalDays, int discountPercent);
 }

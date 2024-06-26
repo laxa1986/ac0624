@@ -1,6 +1,7 @@
 package com.alexc.assessment.service.impl;
 
-import com.alexc.assessment.model.Quote;
+import com.alexc.assessment.exception.InvalidInputException;
+import com.alexc.assessment.model.RentalAgreement;
 import com.alexc.assessment.service.CalendarService;
 import com.alexc.assessment.service.RentalFacade;
 import com.alexc.assessment.service.ToolService;
@@ -17,9 +18,47 @@ public class RentalFacadeImpl implements RentalFacade {
     private final CalendarService calendarService;
 
     @Override
-    public Quote calculateQuote(String toolCode, LocalDate checkoutDate, int rentalDays, int discountPercent) {
+    public RentalAgreement checkout(String toolCode, LocalDate checkoutDate, int rentalDays, int discountPercent) {
+        if (rentalDays < 1) {
+            throw new InvalidInputException("Rental days must be at least 1");
+        }
+        if (discountPercent < 0 || discountPercent > 100) {
+            throw new InvalidInputException("Discount percent must be between 0 and 100");
+        }
+
         val tool = toolService.getTool(toolCode);
-        calendarService.toString();
-        return null;
+        val toolType = tool.getToolType();
+        val term = calendarService.findTerm(checkoutDate, rentalDays);
+
+        var chargeDays = 0;
+        if (toolType.isWeekdayCharge()) {
+            chargeDays += term.getWeekDays();
+        }
+        if (toolType.isWeekendCharge()) {
+            chargeDays += term.getWeekendDays();
+        }
+        if (toolType.isHolidayCharge()) {
+            chargeDays += term.getHolidays();
+        }
+
+        double discount = 1 - discountPercent / 100.0;
+        double preDiscountCharge = chargeDays * toolType.getDailyCharge();
+        double discountAmount = preDiscountCharge * discount;
+        double finalCharge = preDiscountCharge - discountAmount;
+
+        return RentalAgreement.builder()
+                .toolCode(toolCode)
+                .toolType(toolType.name()) // enum name is readable enough, but could introduce another mapping toolType -> readable form
+                .toolBrand(tool.getBrand())
+                .rentalDays(rentalDays)
+                .checkoutDate(checkoutDate)
+                .dueDate(checkoutDate.plusDays(rentalDays - 1))
+                .dailyRentalCharge(toolType.getDailyCharge())
+                .chargeDays(chargeDays)
+                .preDiscountCharge(preDiscountCharge)
+                .discountPercent(discountPercent)
+                .discountAmount(discountAmount)
+                .finalCharge(finalCharge)
+                .build();
     }
 }
