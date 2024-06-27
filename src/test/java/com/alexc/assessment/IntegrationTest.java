@@ -13,6 +13,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Here I use real application context, thus IntegrationTest name,
+ *  sometimes called FullStackTest leaving IntegrationTest term for test that run against live application running in Docker
+ * Here "*" denote a holiday, "!" denotes a weekday when the holiday is observed and "()" denote the rental period
+ */
 @SpringBootTest(classes = Configuration.class)
 public class IntegrationTest {
     @Autowired
@@ -50,7 +55,7 @@ public class IntegrationTest {
     void shouldConsiderChainsawDiscountForWeekend() {
         // CHNS is a Chainsaw (weekend free) so only 3 days are charged * 1.49 rate - 25% discount => 3.3525
         val rentalAgreement = rentalFacade.checkout("CHNS", LocalDate.of(2020, 7, 2), 5, 25);
-        assertThat(rentalAgreement.getFinalCharge()).isCloseTo(3.3525, within(0.01));
+        assertThat(rentalAgreement.getFinalCharge()).isCloseTo(3.35, within(0.001));
     }
 
     // Test 4
@@ -89,7 +94,7 @@ public class IntegrationTest {
     void shouldChargeOnlyWorkdaysForJackhammerCloseToJuly4In2020() {
         // JAKR is a Jackhammer (only workdays are charged) so 1 day is charged * 2.99 rate - 50% discount => 1.495
         val rentalAgreement = rentalFacade.checkout("JAKR", LocalDate.of(2020, 7, 2), 4, 50);
-        assertThat(rentalAgreement.getFinalCharge()).isCloseTo(1.495, within(0.01));
+        assertThat(rentalAgreement.getFinalCharge()).isCloseTo(1.50, within(0.001));
         rentalAgreement.print();
     }
 }

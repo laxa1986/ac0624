@@ -41,10 +41,12 @@ public class RentalFacadeImpl implements RentalFacade {
             chargeDays += term.getHolidays();
         }
 
-        double discount = discountPercent / 100.0;
+        double discount = 1 - discountPercent / 100.0;
         double preDiscountCharge = chargeDays * toolType.getDailyCharge();
-        double discountAmount = preDiscountCharge * discount;
-        double finalCharge = preDiscountCharge - discountAmount;
+        double finalCharge = preDiscountCharge * discount;
+        double roundedPreDiscountCharge = roundToPenny(preDiscountCharge);
+        double roundedFinalCharge = roundToPenny(finalCharge);
+        double roundedDiscountAmount = preDiscountCharge - finalCharge;
 
         return RentalAgreement.builder()
                 .toolCode(toolCode)
@@ -55,10 +57,14 @@ public class RentalFacadeImpl implements RentalFacade {
                 .dueDate(checkoutDate.plusDays(rentalDays - 1))
                 .dailyRentalCharge(toolType.getDailyCharge())
                 .chargeDays(chargeDays)
-                .preDiscountCharge(preDiscountCharge)
+                .preDiscountCharge(roundedPreDiscountCharge)
                 .discountPercent(discountPercent)
-                .discountAmount(discountAmount)
-                .finalCharge(finalCharge)
+                .discountAmount(roundedDiscountAmount)
+                .finalCharge(roundedFinalCharge)
                 .build();
+    }
+
+    private double roundToPenny(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 }

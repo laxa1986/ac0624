@@ -39,6 +39,9 @@ public class RentalAgreement {
      */
     private double finalCharge;
 
+    // there are no explicit tests on this method, I tested it manually via printing the result and examining it
+    // alternatively could split in 2 methods - one return formatted string and second print it, so then I could test the first one
+    // also printing in System.out is just for simplicity, alternatively method could accept Writer to abstract the output
     public void print() {
         System.out.println("Tool code: " + toolCode);
         System.out.println("Tool type: " + toolType);
