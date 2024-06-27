@@ -41,7 +41,7 @@ public class RentalFacadeImpl implements RentalFacade {
             chargeDays += term.getHolidays();
         }
 
-        double discount = 1 - discountPercent / 100.0;
+        double discount = discountPercent / 100.0;
         double preDiscountCharge = chargeDays * toolType.getDailyCharge();
         double discountAmount = preDiscountCharge * discount;
         double finalCharge = preDiscountCharge - discountAmount;
