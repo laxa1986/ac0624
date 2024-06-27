@@ -3,11 +3,17 @@ package com.alexc.assessment.model;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Getter
 @Builder
 public class RentalAgreement {
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yy");
+    private static final NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.US);
+
     private String toolCode;
     private String toolType;
     private String toolBrand;
@@ -36,6 +42,15 @@ public class RentalAgreement {
     public void print() {
         System.out.println("Tool code: " + toolCode);
         System.out.println("Tool type: " + toolType);
-        System.out.println("Final charge: " + finalCharge);
+        System.out.println("Tool brand: " + toolBrand);
+        System.out.println("Rental days: " + rentalDays);
+        System.out.println("Checkout date: " + dateFormatter.format(checkoutDate));
+        System.out.println("Due date: " + dateFormatter.format(dueDate));
+        System.out.println("Daily rental charge: " + currencyFormatter.format(dailyRentalCharge));
+        System.out.println("Charge days: " + chargeDays);
+        System.out.println("Pre-discount charge: " + currencyFormatter.format(preDiscountCharge));
+        System.out.println("Discount percent: " + discountPercent + "%");
+        System.out.println("Discount amount: " + currencyFormatter.format(discountAmount));
+        System.out.println("Final charge: " + currencyFormatter.format(finalCharge));
     }
 }

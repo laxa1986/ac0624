@@ -90,5 +90,6 @@ public class IntegrationTest {
         // JAKR is a Jackhammer (only workdays are charged) so 1 day is charged * 2.99 rate - 50% discount => 1.495
         val rentalAgreement = rentalFacade.checkout("JAKR", LocalDate.of(2020, 7, 2), 4, 50);
         assertThat(rentalAgreement.getFinalCharge()).isCloseTo(1.495, within(0.01));
+        rentalAgreement.print();
     }
 }
